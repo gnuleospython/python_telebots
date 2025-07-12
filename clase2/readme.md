@@ -40,7 +40,7 @@ Metodos:
 
 Crea:
 - Una lista con tus 3 películas favoritas.
-- Un diccionario con tu nombre, genero, año.
+- Un diccionario con nombre, genero, año.
 - Imprime las operaciones.
 
 ---
