@@ -23,11 +23,13 @@
       {% for pokemon in pokemon_list %}
       <div class="col">
         <div class="card h-100 text-center">
-          <img src="{{ pokemon.image }}" class="card-img-top p-3" alt="{{ pokemon.name }}">
+          <div class="d-flex justify-content-center">
+            <img src="{{ pokemon.image_front }}" alt="Frente" style="width: 150px; margin-right: 10px;">
+            <img src="{{ pokemon.image_back }}" alt="Atrás" style="width: 150px;">
+          </div>
           <div class="card-body">
             <h5 class="card-title">{{ pokemon.name }}</h5>
             <p class="card-text">
-              <strong>Tipo:</strong> {{ pokemon.types | join(', ') }}<br>
               <strong>Altura:</strong> {{ pokemon.height }}<br>
               <strong>Peso:</strong> {{ pokemon.weight }}<br>
               <strong>Habilidades:</strong> {{ pokemon.abilities | join(', ') }}
