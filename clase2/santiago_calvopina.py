@@ -1,8 +1,3 @@
-"""
-Autor: Santiago Calvopiña
-Descripción: Archivo con ejercicios de objetos, listas/diccionarios y POO con trivia en Python.
-"""
-
 #  ////////////////////////////////// Ejercicio 1: Objetos //////////////////////////////////
 
 # Objeto: Computadora
@@ -85,7 +80,7 @@ class Pregunta:
     def verificar(self, eleccion_usuario):
         return eleccion_usuario == self.respuesta_correcta
 
-# Pregunta de ejemplo
+# Pregunta 
 pregunta = Pregunta(
     "¿Cuál es el lenguaje que se ejecuta en el navegador?",
     ["Python", "C++", "JavaScript", "Java"],
