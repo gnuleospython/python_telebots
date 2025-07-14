@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>💬 Chatbot con Gemini AI</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <style>
+    body {
+      background-color: #e9ecef; /* Un gris claro para el fondo */
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .chat-container-wrapper {
+      max-width: 800px; /* Ancho máximo para el contenedor principal */
+      width: 100%;
+      margin: auto; /* Centra el contenedor */
+      flex-grow: 1; /* Permite que el contenedor crezca y ocupe espacio */
+      display: flex;
+      flex-direction: column;
+      padding: 15px;
+    }
+    .card {
+      border-radius: 1rem;
+      box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15);
+      overflow: hidden; /* Asegura que las burbujas no se salgan del card */
+      display: flex;
+      flex-direction: column;
+      height: 100%; /* Ocupa el espacio disponible en el wrapper */
+    }
+    .card-header {
+      background-color: #007bff; /* Color primario de Bootstrap */
+      color: white;
+      border-top-left-radius: 1rem;
+      border-top-right-radius: 1rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chat-box {
+      flex-grow: 1; /* Permite que el chatbox ocupe el espacio restante */
+      overflow-y: auto;
+      padding: 1.5rem;
+      background-color: #f8f9fa; /* Fondo del área de chat */
+      display: flex;
+      flex-direction: column;
+      gap: 10px; /* Espacio entre burbujas */
+    }
+    .chat-bubble {
+      padding: 0.8rem 1.2rem;
+      border-radius: 1.2rem; /* Bordes más redondeados */
+      max-width: 80%; /* Para que los mensajes no ocupen todo el ancho */
+      word-wrap: break-word; /* Para manejar texto largo */
+      box-shadow: 0 1px 2px rgba(0,0,0,.1);
+    }
+    .user {
+      background-color: #d1e7dd; /* Un verde claro de Bootstrap */
+      align-self: flex-end; /* A la derecha para el usuario */
+      border-bottom-right-radius: 0.3rem; /* Esquina inferior derecha menos redondeada */
+    }
+    .bot {
+      background-color: #e0f7fa; /* Un azul claro/celeste de Bootstrap */
+      align-self: flex-start; /* A la izquierda para el bot */
+      border-bottom-left-radius: 0.3rem; /* Esquina inferior izquierda menos redondeada */
+    }
+    .message-timestamp {
+      font-size: 0.75rem;
+      color: #6c757d;
+      margin-top: 5px;
+      text-align: right;
+    }
+    .bot .message-timestamp {
+      text-align: left;
+    }
+    .input-group {
+      padding: 1rem 0;
+      background-color: #f8f9fa; /* Fondo del área de entrada */
+      border-top: 1px solid #dee2e6; /* Separador */
+      border-bottom-left-radius: 1rem;
+      border-bottom-right-radius: 1rem;
+    }
+    .input-group input {
+      border-radius: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      border-color: #ced4da;
+    }
+    .input-group .btn {
+      border-radius: 0.5rem;
+      padding: 0.75rem 1.5rem;
+    }
+    .btn-clear-chat {
+      margin-top: 1rem;
+      width: 100%;
+      max-width: 200px;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+      border-radius: 0.5rem;
+      font-weight: bold;
+    }
+
+    /* Estilos para la barra de desplazamiento (solo Webkit) */
+    .chat-box::-webkit-scrollbar {
+      width: 8px;
+    }
+    .chat-box::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    .chat-box::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 10px;
+    }
+    .chat-box::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container-wrapper">
+    <div class="card">
+      <div class="card-header">
+        <i class="bi bi-robot"></i> Chatbot con Gemini AI
+      </div>
+      <div class="card-body chat-box">
+        {% for user_msg, bot_msg, timestamp in chat_history %}
+          <div class="chat-bubble user">
+            <strong>Tú:</strong> {{ user_msg }}
+            <div class="message-timestamp">{{ timestamp }}</div>
+          </div>
+          <div class="chat-bubble bot">
+            <strong>Bot:</strong> {{ bot_msg }}
+            <div class="message-timestamp">{{ timestamp }}</div>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="card-footer input-group">
+        <form action="/send" method="POST" class="d-flex w-100">
+          <input type="text" name="message" class="form-control me-2" placeholder="Escribe tu mensaje..." required autofocus>
+          <button type="submit" class="btn btn-primary"><i class="bi bi-send-fill"></i> Enviar</button>
+        </form>
+      </div>
+    </div>
+    <a href="/clear" class="btn btn-outline-danger btn-clear-chat">
+      <i class="bi bi-trash-fill"></i> Limpiar chat
+    </a>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigF/h/2hLnyqfQ2" crossorigin="anonymous"></script>
+  <script>
+    // Desplazar el chat al final al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+      var chatBox = document.querySelector('.chat-box');
+      chatBox.scrollTop = chatBox.scrollHeight;
+    });
+  </script>
+</body>
+</html>
