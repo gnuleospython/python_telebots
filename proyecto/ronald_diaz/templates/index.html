@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>🤖 Chatbot con Gemini</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background:
+        linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)),
+        url('https://images.aws.nestle.recipes/resized/2024_10_23T08_34_55_badun_images.badun.es_pastelitos_de_chocolate_blanco_y_queso_con_fresas_1290_742.jpg') center/cover no-repeat;
+    }
+
+    .chat-box {
+      max-height: 60vh;
+      overflow-y: auto;
+      padding: 1rem;
+      background: #ffffff;
+      border-radius: .5rem;
+      box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,0.1);
+    }
+
+    .chat-container { display: flex; flex-direction: column; gap: .75rem; }
+
+    .chat-bubble {
+      padding: .75rem 1.25rem;
+      border-radius: 2rem;
+      max-width: 80%;
+      word-wrap: break-word;
+      box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.05);
+      color: #fff;
+    }
+
+    .chat-bubble.user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #4e9af1, #1d6cd1);
+    }
+
+    .chat-bubble.bot {
+      align-self: flex-start;
+      background: linear-gradient(135deg, #f1c42d, #d18c1d);
+    }
+
+    .timestamp {
+      font-size: .75rem;
+      color: #6c757d;
+      margin-top: .25rem;
+    }
+  </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+      <a class="navbar-brand" href="#">🤖 PostresChat</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navLinks">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/acerca">Acerca</a></li>
+          <li class="nav-item"><a class="nav-link text-danger" href="/clear">🗑 Limpiar chat</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container flex-fill d-flex justify-content-center align-items-center">
+    <div class="w-100" style="max-width: 800px;">
+      <div class="chat-box chat-container mb-3">
+        {% for user_msg, bot_msg, timestamp in chat_history %}
+          <div class="d-flex flex-column">
+            <div class="chat-bubble user"><strong>Tú:</strong> {{ user_msg }}</div>
+            <div class="timestamp text-end">{{ timestamp }}</div>
+          </div>
+          <div class="d-flex flex-column">
+            <div class="chat-bubble bot"><strong>Bot:</strong> {{ bot_msg }}</div>
+            <div class="timestamp text-start">{{ timestamp }}</div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <form action="/send" method="POST" class="input-group mb-5 w-100">
+        <input type="text" name="message" class="form-control form-control-lg" placeholder="Escribe tu mensaje..." required>
+        <button type="submit" class="btn btn-outline-primary btn-lg">Enviar</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+#Realizado los 2 ejercicios uno de pokemon que tiene nombre flask_pokeapi y el otro flask_chistes
