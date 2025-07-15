@@ -1,86 +1,59 @@
-
-import sqlite3
+from telegram import Update, ReplyKeyboardMarkup
+from telegram.ext import (
+    ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes,
+    filters, ConversationHandler
+)
+from mailjet_rest import Client
+import requests
 import os
 import re
-import requests
-import telebot
-from telebot import types
+import sqlite3
 from datetime import datetime
 from dotenv import load_dotenv
+from telebot import TeleBot, types
+import datetime
 
-# Obtine el token del bot de las variables de entorno
 load_dotenv()
+
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+bot = TeleBot(BOT_TOKEN)
 
-if not BOT_TOKEN:
-    print("Error: La variable de entorno TELEGRAM_BOT_TOKEN no está configurada.")
-    print("Por favor, asegúrate de establecerla antes de ejecutar el script.")
-    exit() # Salir del script si no hay token
+# Estado temporal de los usuarios
+user_data = {}
 
-# Inicializa el bot
-bot = telebot.TeleBot(BOT_TOKEN)
-
-# Responde al comando /start
 @bot.message_handler(commands=['start'])
-def send_welcome(message):
+def start(message):
+    bot.send_message(message.chat.id, "Hola...\nTe saluda Terra Habitat Bienes Raices\nPor favor, escribe tu nombre completo:")
+    bot.register_next_step_handler(message, process_nombre)
 
-    user_name = message.from_user.first_name if message.from_user.first_name else "usuario"
-    bot.reply_to(message, f"¡Hola, {user_name}!\n Somos Terra Habitat Bienes Raices\n Selecciona una opción para poderte ayudar")
-    #print(f"Comando /start recibido de {message.from_user.username}")
+def process_nombre(message):
+    user_data[message.chat.id] = {"nombre": message.text}
+    
+    bot.send_message(message.chat.id, "¿Qué servicio deseas? \n (Compra - Venta - Alquiler - Avalúo - Administración - Otro Servicio)")
+    bot.register_next_step_handler(message, process_servicio)
+
+def process_servicio(message):
+    user_data[message.chat.id]["servicio"] = message.text
+    
+    bot.send_message(message.chat.id, "Ayudame con tu número de teléfono")
+    bot.register_next_step_handler(message, process_telefono)
+
+def process_telefono(message):
+    user_data[message.chat.id]["telefono"] = message.text
+    
+    bot.send_message(message.chat.id, "Ayudame con tu correo electrónico")
+    bot.register_next_step_handler(message, cita)
+    
+def cita(message):
+    user_data[message.chat.id]["time"] = message.text
+    data = user_data[message.chat.id]
+    
+    bot.send_message(message.chat.id, "🔹¡Tu cita ha sido registrada!\nUn Asesor te atendera de forma presonalizada")
+    resumen = f"🗓️*Resumen de tu cita:*\nNombre: {data['nombre']}\nServicio: {data['servicio']}\nTelefono: {data['telefono']}"
+    
+    bot.send_message(message.chat.id, resumen, parse_mode='Markdown')
 
 
-# Inicializa el bot para que empiece a escuchar mensajes
-print("Bot iniciando... Presiona Ctrl+C para detenerlo.")
-bot.polling(none_stop=True, interval=0) # none_stop=True para que siga funcionando, interval=0 para polling rápido
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# # 4. Manejador para el comando /help
-# @bot.message_handler(commands=['help'])
-# def send_help(message):
-#     """
-#     Responde al comando /help.
-#     """
-#     help_text = """
-#     Estos son los comandos que entiendo:
-#     /start - Inicia el bot y saluda.
-#     /help - Muestra este mensaje de ayuda.
-#     /echo [texto] - Repite el texto que le envíes.
-#     También puedo responder a cualquier mensaje de texto.
-#     """
-#     bot.reply_to(message, help_text)
-#     print(f"Comando /help recibido de {message.from_user.username}")
-
-# # 5. Manejador para el comando /echo (con parámetros)
-# @bot.message_handler(commands=['echo'])
-# def echo_all(message):
-#     """
-#     Repite el texto que sigue al comando /echo.
-#     """
-#     if len(message.text.split()) > 1:
-#         text_to_echo = " ".join(message.text.split()[1:])
-#         bot.reply_to(message, f"Me pediste que repita: {text_to_echo}")
-#     else:
-#         bot.reply_to(message, "Por favor, usa el comando /echo seguido del texto que quieres que repita. Ejemplo: /echo Hola mundo")
-#     print(f"Comando /echo recibido de {message.from_user.username}")
-
-# # 6. Manejador para mensajes de texto genéricos (cualquier otro mensaje que no sea un comando)
-# @bot.message_handler(func=lambda message: True) # La función lambda 'True' hace que maneje todos los mensajes
-# def echo_message(message):
-#     """
-#     Responde a cualquier mensaje de texto que no sea un comando.
-#     """
-#     bot.reply_to(message, f"Recibí tu mensaje: '{message.text}'")
-#     print(f"Mensaje de texto recibido de {message.from_user.username}: '{message.text}'")
+if __name__ == "__main__":
+    print("Bot ejecutándose...")
+    bot.infinity_polling()
