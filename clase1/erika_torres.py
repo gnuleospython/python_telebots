@@ -1,3 +1,5 @@
+
+
 ## 🧪 Ejercicio 1: Números primos
 
 def es_primo(num):
