@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat con Gemini</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f0f0f0; }
+        #chat { width: 100%; max-width: 500px; margin: 40px auto; background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 2px 6px #0002;}
+        .msg { margin: 10px 0; }
+        .user { color: #1976d2; font-weight: bold; }
+        .bot { color: #388e3c; font-weight: bold; }
+        #user-info { margin-bottom: 16px; }
+        #user-info input { margin-right: 10px; }
+        #input, #send-btn, #final-btn { margin-top: 10px; }
+        #final-btn { background: #d32f2f; color: #fff; border: none; border-radius: 5px; padding: 6px 12px; margin-left: 10px;}
+    </style>
+</head>
+<body>
+    <div id="chat">
+        <h2>Chat con Gemini IA</h2>
+        <div id="user-info">
+            <input type="text" id="nombre" placeholder="Tu nombre" required>
+            <input type="email" id="email" placeholder="Tu correo electrónico" required>
+        </div>
+        <div id="messages"></div>
+        <input type="text" id="input" placeholder="Escribe tu mensaje..." style="width: 70%;" disabled>
+        <button id="send-btn" onclick="sendMsg()" disabled>Enviar</button>
+        <button id="final-btn" onclick="finalizarChat()" disabled>Limpiar</button>
+    </div>
+    <script>
+        const nombreInput = document.getElementById('nombre');
+        const emailInput = document.getElementById('email');
+        const inputMsg = document.getElementById('input');
+        const sendBtn = document.getElementById('send-btn');
+        const finalBtn = document.getElementById('final-btn');
+        const messagesDiv = document.getElementById('messages');
+        let mensajesChat = []; // Para guardar el chat
+
+        function validarCampos() {
+            const nombreVal = nombreInput.value.trim();
+            const emailVal = emailInput.value.trim();
+            const emailOk = /^[^@]+@[^@]+\.[a-zA-Z]{2,}$/.test(emailVal);
+            const habilitar = nombreVal.length > 0 && emailOk;
+            inputMsg.disabled = !habilitar;
+            sendBtn.disabled = !habilitar;
+            finalBtn.disabled = !habilitar;
+        }
+        nombreInput.addEventListener('input', validarCampos);
+        emailInput.addEventListener('input', validarCampos);
+
+        function addMsg(sender, text) {
+            let nombreUsuario = nombreInput.value.trim() || 'Tú';
+            const div = document.createElement('div');
+            if (sender === 'user') {
+                div.innerHTML = `<span class="${sender}">${nombreUsuario}:</span> ${text}`;
+            } else {
+                div.innerHTML = `<span class="${sender}">Gemini:</span> ${text}`;
+            }
+            div.classList.add('msg');
+            messagesDiv.appendChild(div);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            // Guardar para enviar al backend después
+            mensajesChat.push(`${sender === 'user' ? nombreUsuario : 'Gemini'}: ${text}`);
+        }
+
+        function sendMsg() {
+            const text = inputMsg.value.trim();
+            const nombre = nombreInput.value.trim();
+            const email = emailInput.value.trim();
+            if (!text || !nombre || !email) return;
+            addMsg('user', text);
+            inputMsg.value = "";
+            fetch('/chat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({message: text, nombre: nombre, email: email})
+            })
+            .then(r => r.json())
+            .then(data => {
+                addMsg('bot', data.response);
+            });
+        }
+
+        inputMsg.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !sendBtn.disabled) sendMsg();
+        });
+
+        function finalizarChat() {
+            const nombre = nombreInput.value.trim();
+            const email = emailInput.value.trim();
+            const chatCompleto = mensajesChat.join('\n');
+            if (!nombre || !email || !chatCompleto) return;
+            fetch('/guardar', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    nombre: nombre,
+                    email: email,
+                    chat: chatCompleto
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === "ok") {
+                    // Limpiar todo
+                    messagesDiv.innerHTML = "";
+                    nombreInput.value = "";
+                    emailInput.value = "";
+                    inputMsg.value = "";
+                    mensajesChat = [];
+                    validarCampos();
+                    alert("¡Conversación guardada y correo enviado, chat reiniciado!");
+                } else {
+                    alert("Error al guardar la conversación.");
+                }
+            });
+        }
+    </script>
+</body>
+</html>
