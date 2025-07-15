@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Acerca de – PostresChat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background:
+        linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)),
+        url('https://images.aws.nestle.recipes/resized/2024_10_23T08_34_55_badun_images.badun.es_pastelitos_de_chocolate_blanco_y_queso_con_fresas_1290_742.jpg') center/cover no-repeat;
+    }
+
+    .about-card {
+      backdrop-filter: blur(8px);
+      background: rgba(255,255,255,0.75);
+      border: none;
+      border-radius: 1rem;
+    }
+  </style>
+</head>
+<body class="d-flex flex-column">
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+      <a class="navbar-brand" href="/">🤖 PostresChat</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navLinks">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/acerca">Acerca</a></li>
+          <li class="nav-item"><a class="nav-link text-danger" href="/clear">🗑 Limpiar chat</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-fill d-flex justify-content-center align-items-center py-5">
+    <div class="card p-4 about-card shadow-lg" style="max-width: 700px;">
+      <h1 class="card-title text-center mb-3">Acerca de PostresChat</h1>
+      <p class="card-text fs-5">
+        <strong>PostresChat</strong> es un chatbot especializado en dulces y postres.  
+        Diseñado para responder cualquier pregunta relacionada con la selección de ingredientes, técnicas de preparación, tiempos de horneado y decoración de postres.
+      </p>
+      <p class="card-text fs-5">
+        <em>Ejemplos de temas que cubre:</em>
+        <ul class="mt-2">
+          <li>Cómo hacer un bizcocho esponjoso de vainilla</li>
+          <li>Alternativas sin gluten o sin lácteos</li>
+          <li>Técnicas de baño de chocolate y glaseado</li>
+          <li>Decoración con glaseado real y fondant</li>
+        </ul>
+      </p>
+      <p class="card-text fs-5">
+        <strong>Nota:</strong> Si le preguntas algo que <em>no</em> tenga que ver con postres o preparación de dulces,  
+        <strong>PostresChat</strong> te indicará amablemente que solo puede responder consultas relacionadas a postres.
+      </p>
+    </div>
+  </main>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
