@@ -70,7 +70,7 @@ def guardar_interaccion(update: Update):
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     mensaje = (
         "🍷 *Bienvenido a Bodega Palermo* 🍾\n\n"
-        "Selecciona el producto que deseas consultar:"
+        "Selecciona el producto que deseas consultar por favor:"
     )
     keyboard = [
         [InlineKeyboardButton(text=opcion, callback_data=opcion)]
