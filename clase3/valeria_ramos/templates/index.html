@@ -1,0 +1,19 @@
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Chiste Random</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light text-center p-5">
+  <div class="container">
+    <h1 class="mb-4">😂 Chiste Random</h1>
+    <div class="card shadow p-4">
+      <p class="fs-5"><strong>Chiste:</strong> {{ setup }}</p>
+      <p class="fs-5"><strong>Respuesta:</strong> {{ punchline }}</p>
+      <form method="get" action="/">
+        <button type="submit" class="btn btn-primary">👉 Otro chiste</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
